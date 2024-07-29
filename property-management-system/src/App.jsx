@@ -9,6 +9,7 @@ import Properties from './components/Properties';
 import Tenants from './components/Tenants';
 import Maintenance from './components/Maintenance';
 import Navigation from './components/Navigation';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const theme = createTheme({
   palette: {
@@ -30,10 +31,26 @@ const App = () => {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/properties" element={<Properties />} />
-          <Route path="/tenants" element={<Tenants />} />
-          <Route path="/maintenance" element={<Maintenance />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/properties" element={
+            <ProtectedRoute>
+              <Properties />
+            </ProtectedRoute>
+          } />
+          <Route path="/tenants" element={
+            <ProtectedRoute>
+              <Tenants />
+            </ProtectedRoute>
+          } />
+          <Route path="/maintenance" element={
+            <ProtectedRoute>
+              <Maintenance />
+            </ProtectedRoute>
+          } />
           <Route path="/" element={<Login />} />
         </Routes>
       </Router>

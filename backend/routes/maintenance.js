@@ -5,8 +5,8 @@ const MaintenanceRequest = require('../models/MaintenanceRequest');
 router.get('/', async (req, res) => {
     try {
         const maintenanceRequests = await MaintenanceRequest.find()
-            .populate('property', 'name')
-            .populate('tenant', 'username');
+            .populate('property')
+            .populate('tenant');
         res.json(maintenanceRequests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
     const maintenanceRequest = new MaintenanceRequest({
         property: req.body.property,
         tenant: req.body.tenant,
-        description: req.body.description,
+        description: req.body.description
     });
 
     try {

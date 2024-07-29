@@ -25,6 +25,7 @@ const Properties = () => {
     const [newProperty, setNewProperty] = useState({ name: '', address: '', type: '' });
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchProperties();
@@ -32,11 +33,15 @@ const Properties = () => {
 
     const fetchProperties = async () => {
         try {
+            setLoading(true);
             const response = await axios.get('http://localhost:5000/api/properties');
             setProperties(response.data);
+            setError(null);
         } catch (error) {
             console.error('Error fetching properties:', error);
             setError('Failed to fetch properties. Please try again later.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -53,6 +58,7 @@ const Properties = () => {
             setShowModal(false);
         } catch (error) {
             console.error('Error adding property:', error);
+            setError('Failed to add property. Please try again.');
         }
     };
 
@@ -62,15 +68,18 @@ const Properties = () => {
             fetchProperties();
         } catch (error) {
             console.error('Error deleting property:', error);
+            setError('Failed to delete property. Please try again.');
         }
     };
+
+    if (loading) return <Typography>Loading...</Typography>;
+    if (error) return <Typography color="error">{error}</Typography>;
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Typography variant="h4" gutterBottom>
                 Properties
             </Typography>
-            {error && <Typography color="error">{error}</Typography>}
             <Button
                 variant="contained"
                 startIcon={<AddIcon />}
