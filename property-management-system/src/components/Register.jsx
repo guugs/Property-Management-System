@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { TextField, Button, Container, Typography, Box, MenuItem } from '@mui/material';
 
 const Register = () => {
     const [username, setUsername] = useState('');

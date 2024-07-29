@@ -1,17 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 
 const Navigation = () => {
     return (
-        <nav>
-            <ul>
-                <li><Link to="/dashboard">Dashboard</Link></li>
-                <li><Link to="/properties">Properties</Link></li>
-                <li><Link to="/tenants">Tenants</Link></li>
-                <li><Link to="/maintenance">Maintenance</Link></li>
-                <li><Link to="/login">Logout</Link></li>
-            </ul>
-        </nav>
+        <AppBar position="static">
+            <Toolbar>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    Property Management System
+                </Typography>
+                <Box>
+                    <Button color="inherit" component={RouterLink} to="/dashboard">
+                        Dashboard
+                    </Button>
+                    <Button color="inherit" component={RouterLink} to="/properties">
+                        Properties
+                    </Button>
+                    <Button color="inherit" component={RouterLink} to="/tenants">
+                        Tenants
+                    </Button>
+                    <Button color="inherit" component={RouterLink} to="/maintenance">
+                        Maintenance
+                    </Button>
+                    <Button color="inherit" component={RouterLink} to="/login">
+                        Logout
+                    </Button>
+                </Box>
+            </Toolbar>
+        </AppBar>
     );
 };
 

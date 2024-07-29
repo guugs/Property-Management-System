@@ -56,6 +56,8 @@ const Properties = () => {
                         <th>Name</th>
                         <th>Address</th>
                         <th>Type</th>
+                        <th>Tenants</th>
+                        <th>Lease Period</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -65,7 +67,10 @@ const Properties = () => {
                             <td>{property.name}</td>
                             <td>{property.address}</td>
                             <td>{property.type}</td>
+                            <td>{property.tenants.length}</td>
+                            <td>{property.leaseStart ? `${new Date(property.leaseStart).toLocaleDateString()} - ${new Date(property.leaseEnd).toLocaleDateString()}` : 'N/A'}</td>
                             <td>
+                                <Button variant="info" size="sm" className="mr-2">Edit</Button>
                                 <Button variant="danger" size="sm" onClick={() => deleteProperty(property._id)}>Delete</Button>
                             </td>
                         </tr>

@@ -9,6 +9,7 @@ const propertySchema = new Schema({
     tenants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     leaseStart: { type: Date },
     leaseEnd: { type: Date },
+    maintenanceRequests: [{ type: Schema.Types.ObjectId, ref: 'MaintenanceRequest' }]
 });
 
 module.exports = mongoose.model('Property', propertySchema);

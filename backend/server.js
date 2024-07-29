@@ -23,6 +23,10 @@ app.listen(port, () => {
  
 const authRoutes = require('./routes/auth');
 const propertyRoutes = require('./routes/properties');
+const tenantRoutes = require('./routes/tenants');
+const maintenanceRoutes = require('./routes/maintenance');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
+app.use('/api/tenants', tenantRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
