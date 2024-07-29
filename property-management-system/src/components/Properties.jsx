@@ -1,11 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Form, Button, Modal } from 'react-bootstrap';
+import {
+  Container,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  IconButton,
+} from '@mui/material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 const Properties = () => {
     const [properties, setProperties] = useState([]);
     const [newProperty, setNewProperty] = useState({ name: '', address: '', type: '' });
     const [showModal, setShowModal] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchProperties();
@@ -13,10 +32,11 @@ const Properties = () => {
 
     const fetchProperties = async () => {
         try {
-            const response = await axios.get('/api/properties');
+            const response = await axios.get('http://localhost:5000/api/properties');
             setProperties(response.data);
         } catch (error) {
             console.error('Error fetching properties:', error);
+            setError('Failed to fetch properties. Please try again later.');
         }
     };
 
@@ -27,7 +47,7 @@ const Properties = () => {
     const addProperty = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/properties', newProperty);
+            await axios.post('http://localhost:5000/api/properties', newProperty);
             setNewProperty({ name: '', address: '', type: '' });
             fetchProperties();
             setShowModal(false);
@@ -38,7 +58,7 @@ const Properties = () => {
 
     const deleteProperty = async (id) => {
         try {
-            await axios.delete(`/api/properties/${id}`);
+            await axios.delete(`http://localhost:5000/api/properties/${id}`);
             fetchProperties();
         } catch (error) {
             console.error('Error deleting property:', error);
@@ -46,61 +66,106 @@ const Properties = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <h1>Properties</h1>
-            <Button variant="primary" onClick={() => setShowModal(true)}>Add New Property</Button>
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Typography variant="h4" gutterBottom>
+                Properties
+            </Typography>
+            {error && <Typography color="error">{error}</Typography>}
+            <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setShowModal(true)}
+                sx={{ mb: 2 }}
+            >
+                Add New Property
+            </Button>
 
-            <Table striped bordered hover className="mt-3">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Type</th>
-                        <th>Tenants</th>
-                        <th>Lease Period</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {properties.map((property) => (
-                        <tr key={property._id}>
-                            <td>{property.name}</td>
-                            <td>{property.address}</td>
-                            <td>{property.type}</td>
-                            <td>{property.tenants.length}</td>
-                            <td>{property.leaseStart ? `${new Date(property.leaseStart).toLocaleDateString()} - ${new Date(property.leaseEnd).toLocaleDateString()}` : 'N/A'}</td>
-                            <td>
-                                <Button variant="info" size="sm" className="mr-2">Edit</Button>
-                                <Button variant="danger" size="sm" onClick={() => deleteProperty(property._id)}>Delete</Button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Address</TableCell>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Tenants</TableCell>
+                            <TableCell>Lease Period</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {properties.map((property) => (
+                            <TableRow key={property._id}>
+                                <TableCell>{property.name}</TableCell>
+                                <TableCell>{property.address}</TableCell>
+                                <TableCell>{property.type}</TableCell>
+                                <TableCell>{property.tenants.length}</TableCell>
+                                <TableCell>
+                                    {property.leaseStart
+                                        ? `${new Date(property.leaseStart).toLocaleDateString()} - ${new Date(property.leaseEnd).toLocaleDateString()}`
+                                        : 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                    <IconButton color="primary" size="small">
+                                        <EditIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        color="error"
+                                        size="small"
+                                        onClick={() => deleteProperty(property._id)}
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Property</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={addProperty}>
-                        <Form.Group>
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" name="name" value={newProperty.name} onChange={handleInputChange} required />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Address</Form.Label>
-                            <Form.Control type="text" name="address" value={newProperty.address} onChange={handleInputChange} required />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Type</Form.Label>
-                            <Form.Control type="text" name="type" value={newProperty.type} onChange={handleInputChange} required />
-                        </Form.Group>
-                        <Button variant="primary" type="submit">Add Property</Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-        </div>
+            <Dialog open={showModal} onClose={() => setShowModal(false)}>
+                <DialogTitle>Add New Property</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        name="name"
+                        label="Name"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={newProperty.name}
+                        onChange={handleInputChange}
+                        required
+                    />
+                    <TextField
+                        margin="dense"
+                        name="address"
+                        label="Address"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={newProperty.address}
+                        onChange={handleInputChange}
+                        required
+                    />
+                    <TextField
+                        margin="dense"
+                        name="type"
+                        label="Type"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={newProperty.type}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setShowModal(false)}>Cancel</Button>
+                    <Button onClick={addProperty} variant="contained">Add Property</Button>
+                </DialogActions>
+            </Dialog>
+        </Container>
     );
 };
 

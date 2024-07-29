@@ -45,7 +45,7 @@ const Maintenance = () => {
         Maintenance Requests
       </Typography>
       <Button variant="contained" onClick={handleOpen} sx={{ mb: 2 }}>
-        Add New Request
+        New Request
       </Button>
       <TableContainer component={Paper}>
         <Table>
@@ -54,6 +54,7 @@ const Maintenance = () => {
               <TableCell>Property</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -62,6 +63,9 @@ const Maintenance = () => {
                 <TableCell>{request.property}</TableCell>
                 <TableCell>{request.description}</TableCell>
                 <TableCell>{request.status}</TableCell>
+                <TableCell>
+                  <Button variant="outlined" size="small">Update</Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
