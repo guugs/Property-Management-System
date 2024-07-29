@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
+app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/property-management', {
     useNewUrlParser: true,
@@ -18,7 +20,9 @@ db.once('open', () => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-
+ 
 const authRoutes = require('./routes/auth');
+const propertyRoutes = require('./routes/properties');
 
 app.use('/api/auth', authRoutes);
+app.use('/api/properties', propertyRoutes);
