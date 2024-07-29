@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle login logic here
+        setError('');
         try {
             const response = await axios.post('http://localhost:5000/api/auth/login', { username, password });
             console.log(response.data);
+            
+            // Store the token in localStorage
+            localStorage.setItem('token', response.data.token);
+            
+            // Redirect to dashboard
+            navigate('/dashboard');
         } catch (error) {
             console.error(error);
+            setError('Invalid credentials. Please try again.');
         }
     };
 
@@ -30,6 +40,7 @@ const Login = () => {
                 <Typography component="h1" variant="h5">
                     Login
                 </Typography>
+                {error && <Typography color="error">{error}</Typography>}
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
