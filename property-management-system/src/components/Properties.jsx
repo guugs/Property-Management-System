@@ -34,7 +34,12 @@ const Properties = () => {
     const fetchProperties = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/api/properties');
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:5000/api/properties', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             setProperties(response.data);
             setError(null);
         } catch (error) {
@@ -52,7 +57,12 @@ const Properties = () => {
     const addProperty = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/properties', newProperty);
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:5000/api/properties', newProperty, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             setNewProperty({ name: '', address: '', type: '' });
             fetchProperties();
             setShowModal(false);
@@ -62,9 +72,25 @@ const Properties = () => {
         }
     };
 
+    const editProperty = async (id) => {
+        try {
+            const propertyToEdit = properties.find(p => p._id === id);
+            setNewProperty({ ...propertyToEdit });
+            setShowModal(true);
+        } catch (error) {
+            console.error('Error editing property:', error);
+            setError('Failed to edit property. Please try again.');
+        }
+    };
+
     const deleteProperty = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/properties/${id}`);
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:5000/api/properties/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             fetchProperties();
         } catch (error) {
             console.error('Error deleting property:', error);
@@ -114,7 +140,7 @@ const Properties = () => {
                                         : 'N/A'}
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton color="primary" size="small">
+                                    <IconButton color="primary" size="small" onClick={() => editProperty(property._id)}>
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton

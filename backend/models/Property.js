@@ -9,7 +9,19 @@ const propertySchema = new Schema({
     tenants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     leaseStart: { type: Date },
     leaseEnd: { type: Date },
-    maintenanceRequests: [{ type: Schema.Types.ObjectId, ref: 'MaintenanceRequest' }]
+    rent: { type: Number },
+    size: { type: Number },
+    bedrooms: { type: Number },
+    bathrooms: { type: Number },
+    amenities: [String],
+    maintenanceRequests: [{ type: Schema.Types.ObjectId, ref: 'MaintenanceRequest' }],
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+propertySchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
 });
 
 module.exports = mongoose.model('Property', propertySchema);

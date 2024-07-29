@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Container,
   Typography,
@@ -19,12 +20,34 @@ import {
 } from '@mui/material';
 
 const Maintenance = () => {
-  const [requests, setRequests] = useState([
-    { id: 1, property: 'Sunset Apartments', description: 'Leaky faucet', status: 'Pending' },
-    { id: 2, property: 'Green Valley House', description: 'Broken window', status: 'In Progress' },
-  ]);
-  const [open, setOpen] = useState(false);
+  const [requests, setRequests] = useState([]);
   const [newRequest, setNewRequest] = useState({ property: '', description: '', status: 'Pending' });
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/maintenance', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setRequests(response.data);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching maintenance requests:', error);
+      setError('Failed to fetch maintenance requests. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -33,11 +56,40 @@ const Maintenance = () => {
     setNewRequest({ ...newRequest, [e.target.name]: e.target.value });
   };
 
-  const addRequest = () => {
-    setRequests([...requests, { ...newRequest, id: requests.length + 1 }]);
-    setNewRequest({ property: '', description: '', status: 'Pending' });
-    handleClose();
+  const addRequest = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/api/maintenance', newRequest, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setNewRequest({ property: '', description: '', status: 'Pending' });
+      fetchRequests();
+      handleClose();
+    } catch (error) {
+      console.error('Error adding maintenance request:', error);
+      setError('Failed to add maintenance request. Please try again.');
+    }
   };
+
+  const updateRequestStatus = async (id, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`http://localhost:5000/api/maintenance/${id}`, { status: newStatus }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      fetchRequests();
+    } catch (error) {
+      console.error('Error updating maintenance request:', error);
+      setError('Failed to update maintenance request. Please try again.');
+    }
+  };
+
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -59,12 +111,27 @@ const Maintenance = () => {
           </TableHead>
           <TableBody>
             {requests.map((request) => (
-              <TableRow key={request.id}>
+              <TableRow key={request._id}>
                 <TableCell>{request.property}</TableCell>
                 <TableCell>{request.description}</TableCell>
                 <TableCell>{request.status}</TableCell>
                 <TableCell>
-                  <Button variant="outlined" size="small">Update</Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => updateRequestStatus(request._id, 'In Progress')}
+                    disabled={request.status !== 'Pending'}
+                  >
+                    Start
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => updateRequestStatus(request._id, 'Completed')}
+                    disabled={request.status === 'Completed'}
+                  >
+                    Complete
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
