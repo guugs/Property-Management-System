@@ -21,13 +21,15 @@ import {
 
 const Maintenance = () => {
   const [requests, setRequests] = useState([]);
-  const [newRequest, setNewRequest] = useState({ property: '', description: '', status: 'Pending' });
+  const [newRequest, setNewRequest] = useState({ property: '', description: '', status: 'pending' });
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [properties, setProperties] = useState([]);
 
   useEffect(() => {
     fetchRequests();
+    fetchProperties();
   }, []);
 
   const fetchRequests = async () => {
@@ -39,13 +41,31 @@ const Maintenance = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setRequests(response.data);
+      if (Array.isArray(response.data)) {
+        setRequests(response.data);
+      } else {
+        throw new Error('Unexpected response format');
+      }
       setError(null);
     } catch (error) {
       console.error('Error fetching maintenance requests:', error);
       setError('Failed to fetch maintenance requests. Please try again later.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProperties = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/properties', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setProperties(response.data);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
     }
   };
 
@@ -64,7 +84,7 @@ const Maintenance = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setNewRequest({ property: '', description: '', status: 'Pending' });
+      setNewRequest({ property: '', description: '', status: 'pending' });
       fetchRequests();
       handleClose();
     } catch (error) {
@@ -112,23 +132,23 @@ const Maintenance = () => {
           <TableBody>
             {requests.map((request) => (
               <TableRow key={request._id}>
-                <TableCell>{request.property}</TableCell>
+                <TableCell>{request.property.name}</TableCell>
                 <TableCell>{request.description}</TableCell>
                 <TableCell>{request.status}</TableCell>
                 <TableCell>
                   <Button
                     variant="outlined"
                     size="small"
-                    onClick={() => updateRequestStatus(request._id, 'In Progress')}
-                    disabled={request.status !== 'Pending'}
+                    onClick={() => updateRequestStatus(request._id, 'in-progress')}
+                    disabled={request.status !== 'pending'}
                   >
                     Start
                   </Button>
                   <Button
                     variant="outlined"
                     size="small"
-                    onClick={() => updateRequestStatus(request._id, 'Completed')}
-                    disabled={request.status === 'Completed'}
+                    onClick={() => updateRequestStatus(request._id, 'completed')}
+                    disabled={request.status === 'completed'}
                   >
                     Complete
                   </Button>
@@ -142,16 +162,22 @@ const Maintenance = () => {
         <DialogTitle>Add New Maintenance Request</DialogTitle>
         <DialogContent>
           <TextField
+            select
             autoFocus
             margin="dense"
             name="property"
             label="Property"
-            type="text"
             fullWidth
             variant="standard"
             value={newRequest.property}
             onChange={handleInputChange}
-          />
+          >
+            {properties.map((property) => (
+              <MenuItem key={property._id} value={property._id}>
+                {property.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
             margin="dense"
             name="description"
@@ -172,9 +198,9 @@ const Maintenance = () => {
             value={newRequest.status}
             onChange={handleInputChange}
           >
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="In Progress">In Progress</MenuItem>
-            <MenuItem value="Completed">Completed</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="in-progress">In Progress</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
           </TextField>
         </DialogContent>
         <DialogActions>

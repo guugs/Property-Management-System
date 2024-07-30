@@ -20,7 +20,7 @@ import {
 
 const Tenants = () => {
   const [tenants, setTenants] = useState([]);
-  const [newTenant, setNewTenant] = useState({ username: '', password: '', name: '', email: '', phone: '' });
+  const [newTenant, setNewTenant] = useState({ username: '', password: '', role: 'tenant' });
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ const Tenants = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setNewTenant({ username: '', password: '', name: '', email: '', phone: '' });
+      setNewTenant({ username: '', password: '', role: 'tenant' });
       fetchTenants();
       setShowModal(false);
     } catch (error) {
@@ -90,17 +90,15 @@ const Tenants = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
+              <TableCell>Username</TableCell>
+              <TableCell>Role</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {tenants.map((tenant) => (
               <TableRow key={tenant._id}>
-                <TableCell>{tenant.name}</TableCell>
-                <TableCell>{tenant.email}</TableCell>
-                <TableCell>{tenant.phone}</TableCell>
+                <TableCell>{tenant.username}</TableCell>
+                <TableCell>{tenant.role}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -130,39 +128,6 @@ const Tenants = () => {
             fullWidth
             variant="outlined"
             value={newTenant.password}
-            onChange={handleInputChange}
-            required
-          />
-          <TextField
-            margin="dense"
-            name="name"
-            label="Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newTenant.name}
-            onChange={handleInputChange}
-            required
-          />
-          <TextField
-            margin="dense"
-            name="email"
-            label="Email"
-            type="email"
-            fullWidth
-            variant="outlined"
-            value={newTenant.email}
-            onChange={handleInputChange}
-            required
-          />
-          <TextField
-            margin="dense"
-            name="phone"
-            label="Phone"
-            type="tel"
-            fullWidth
-            variant="outlined"
-            value={newTenant.phone}
             onChange={handleInputChange}
             required
           />
