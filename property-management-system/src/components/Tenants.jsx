@@ -20,7 +20,7 @@ import {
 
 const Tenants = () => {
   const [tenants, setTenants] = useState([]);
-  const [newTenant, setNewTenant] = useState({ name: '', email: '', phone: '' });
+  const [newTenant, setNewTenant] = useState({ username: '', password: '', name: '', email: '', phone: '' });
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ const Tenants = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setNewTenant({ name: '', email: '', phone: '' });
+      setNewTenant({ username: '', password: '', name: '', email: '', phone: '' });
       fetchTenants();
       setShowModal(false);
     } catch (error) {
@@ -112,6 +112,28 @@ const Tenants = () => {
         <DialogContent>
           <TextField
             autoFocus
+            margin="dense"
+            name="username"
+            label="Username"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newTenant.username}
+            onChange={handleInputChange}
+            required
+          />
+          <TextField
+            margin="dense"
+            name="password"
+            label="Password"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={newTenant.password}
+            onChange={handleInputChange}
+            required
+          />
+          <TextField
             margin="dense"
             name="name"
             label="Name"

@@ -38,7 +38,8 @@ const Properties = () => {
             const response = await axios.get('http://localhost:5000/api/properties', {
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                timeout: 5000 // 5 seconds timeout
             });
             setProperties(response.data);
             setError(null);
@@ -69,17 +70,6 @@ const Properties = () => {
         } catch (error) {
             console.error('Error adding property:', error);
             setError('Failed to add property. Please try again.');
-        }
-    };
-
-    const editProperty = async (id) => {
-        try {
-            const propertyToEdit = properties.find(p => p._id === id);
-            setNewProperty({ ...propertyToEdit });
-            setShowModal(true);
-        } catch (error) {
-            console.error('Error editing property:', error);
-            setError('Failed to edit property. Please try again.');
         }
     };
 
@@ -140,7 +130,7 @@ const Properties = () => {
                                         : 'N/A'}
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton color="primary" size="small" onClick={() => editProperty(property._id)}>
+                                    <IconButton color="primary" size="small">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton

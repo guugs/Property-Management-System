@@ -1,8 +1,26 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import axios from 'axios';
 
 const Navigation = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:5000/api/auth/logout', {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            localStorage.removeItem('token');
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
+
     return (
         <AppBar position="static">
             <Toolbar>
@@ -22,7 +40,7 @@ const Navigation = () => {
                     <Button color="inherit" component={RouterLink} to="/maintenance">
                         Maintenance
                     </Button>
-                    <Button color="inherit" component={RouterLink} to="/login">
+                    <Button color="inherit" onClick={handleLogout}>
                         Logout
                     </Button>
                 </Box>

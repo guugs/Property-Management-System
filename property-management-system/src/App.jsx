@@ -10,6 +10,7 @@ import Tenants from './components/Tenants';
 import Maintenance from './components/Maintenance';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const theme = createTheme({
   palette: {
@@ -24,37 +25,39 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Navigation />
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/properties" element={
-            <ProtectedRoute>
-              <Properties />
-            </ProtectedRoute>
-          } />
-          <Route path="/tenants" element={
-            <ProtectedRoute>
-              <Tenants />
-            </ProtectedRoute>
-          } />
-          <Route path="/maintenance" element={
-            <ProtectedRoute>
-              <Maintenance />
-            </ProtectedRoute>
-          } />
-          <Route path="/" element={<Login />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Navigation />
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/properties" element={
+              <ProtectedRoute>
+                <Properties />
+              </ProtectedRoute>
+            } />
+            <Route path="/tenants" element={
+              <ProtectedRoute>
+                <Tenants />
+              </ProtectedRoute>
+            } />
+            <Route path="/maintenance" element={
+              <ProtectedRoute>
+                <Maintenance />
+              </ProtectedRoute>
+            } />
+            <Route path="/" element={<Login />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 

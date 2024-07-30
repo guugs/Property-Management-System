@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -37,6 +38,10 @@ router.get('/me', auth, async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+});
+
+router.post('/logout', auth, (req, res) => {
+    res.json({ message: 'Logged out successfully' });
 });
 
 module.exports = router;

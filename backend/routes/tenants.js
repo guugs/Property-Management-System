@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const bcrypt = require('bcryptjs');
 
 // Get all tenants
 router.get('/', auth, async (req, res) => {
@@ -28,12 +29,20 @@ router.get('/:id', auth, async (req, res) => {
 
 // Create a new tenant
 router.post('/', auth, async (req, res) => {
-    const tenant = new User({
-        ...req.body,
-        role: 'tenant'
-    });
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required' });
+    }
 
     try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const tenant = new User({
+            username,
+            password: hashedPassword,
+            role: 'tenant'
+        });
+
         const newTenant = await tenant.save();
         res.status(201).json(newTenant);
     } catch (error) {
