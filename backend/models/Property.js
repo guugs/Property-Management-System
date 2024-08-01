@@ -7,6 +7,7 @@ const propertySchema = new Schema({
     type: { type: String, required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     tenants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    leases: [{ type: Schema.Types.ObjectId, ref: 'Lease' }],
     leaseStart: { type: Date },
     leaseEnd: { type: Date },
     rent: { type: Number },
