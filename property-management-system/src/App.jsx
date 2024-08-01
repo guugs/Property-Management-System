@@ -11,6 +11,8 @@ import Maintenance from './components/Maintenance';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
+import Leases from './components/Leases';
+import Reports from './components/Reports';
 
 const theme = createTheme({
   palette: {
@@ -51,6 +53,16 @@ const App = () => {
             <Route path="/maintenance" element={
               <ProtectedRoute>
                 <Maintenance />
+              </ProtectedRoute>
+            } />
+            <Route path="/leases" element={
+              <ProtectedRoute>
+                <Leases />
+              </ProtectedRoute>
+            } />
+            <Route path="/reports" element={
+              <ProtectedRoute>
+                <Reports />
               </ProtectedRoute>
             } />
             <Route path="/" element={<Login />} />

@@ -40,6 +40,12 @@ const Navigation = () => {
                     <Button color="inherit" component={RouterLink} to="/maintenance">
                         Maintenance
                     </Button>
+                    <Button color="inherit" component={RouterLink} to="/leases">
+                        Leases
+                    </Button>
+                    <Button color="inherit" component={RouterLink} to="/reports">
+                        Reports
+                    </Button>
                     <Button color="inherit" onClick={handleLogout}>
                         Logout
                     </Button>
