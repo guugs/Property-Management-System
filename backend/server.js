@@ -8,7 +8,7 @@ const errorHandler = require('./middleware/errorHandler');
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/property-management', {
+mongoose.connect('mongodb://localhost:27017/property-management', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
