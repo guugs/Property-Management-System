@@ -8,14 +8,15 @@ const errorHandler = require('./middleware/errorHandler');
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/property-management', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+mongoose.connect('mongodb://127.0.0.1:27017/property-management');
 
 const db = mongoose.connection;
 db.once('open', () => {
-    console.log('Connected to MongoDB');
+    try{
+        console.log('Connected to MongoDB');
+    } catch (error){
+        console.log(error);
+    }
 });
 
 const authRoutes = require('./routes/auth');
